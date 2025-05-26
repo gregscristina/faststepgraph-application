@@ -73,10 +73,10 @@ process_dataset <- function(dataset_name, csv_path, num_repeats = 100) {
 
 # File paths for each dataset
 datasets <- list(
-  ER_positive = "data/ER_positivo.csv",
-  ER_negative = "data/ER_negativo.csv",
-  PR_positive = "data/PR_positivo.csv",
-  PR_negative = "data/PR_negativo.csv"
+  ER_positive = "data/ER_positive.csv",
+  ER_negative = "data/ER_negative.csv",
+  PR_positive = "data/PR_positive.csv",
+  PR_negative = "data/PR_negative.csv"
 )
 
 # Main pipeline loop
