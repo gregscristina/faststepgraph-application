@@ -1,0 +1,88 @@
+
+```{r setup, include=FALSE}
+
+
+# required libraries
+library(devtools)
+devtools::install_github("juancolonna/FastStepGraph", quiet = TRUE, force = TRUE)
+library(FastStepGraph)
+library(doParallel)
+library(readr)
+library(dplyr)
+
+#calculate 95% confidence interval
+confidence_interval <- function(vector) {
+  mean_val <- mean(vector)
+  error <- qt(0.975, df = length(vector) - 1) * sd(vector) / sqrt(length(vector))
+  c(lower = mean_val - error, upper = mean_val + error)
+} 
+
+#full pipeline for one dataset
+process_dataset <- function(dataset_name, csv_path, num_repeats = 100) {
+  cat("=====================================================\n")
+  cat("Processing dataset:", dataset_name, "\n")
+
+  # 1. Load and preprocess data
+  df <- read_csv(csv_path)
+  X <- scale(as.matrix(df[ , -1]))  # remove the first column (Patient_ID)
+
+  alpha_f_vector <- numeric(num_repeats)
+  alpha_b_vector <- numeric(num_repeats)
+  times <- numeric(num_repeats)
+
+  for (i in 1:num_repeats) {
+    cat("Iteration:", i, "\n")
+    start_time <- Sys.time()
+    G_cv <- cv.FastStepGraph(X, alpha_f_min = 0.1, alpha_f_max = 0.9, data_scale = TRUE, parallel = TRUE)
+    end_time <- Sys.time()
+
+    alpha_f_vector[i] <- G_cv$alpha_f_opt
+    alpha_b_vector[i] <- G_cv$alpha_b_opt
+    times[i] <- as.numeric(difftime(end_time, start_time, units = "secs"))
+  }
+
+  # statistics
+  mean_f <- mean(alpha_f_vector)
+  mean_b <- mean(alpha_b_vector)
+  mean_time <- mean(times)
+
+  ci_f <- confidence_interval(alpha_f_vector)
+  ci_b <- confidence_interval(alpha_b_vector)
+  ci_time <- confidence_interval(times)
+
+  #FastStepGraph with average alpha values
+  G_final <- FastStepGraph(X, alpha_f = mean_f, alpha_b = mean_b)
+
+  # results
+  cat("\n>>>> Results for dataset:", dataset_name, "<<<<\n")
+  cat(sprintf("alpha_f: mean = %.4f | 95%% CI = [%.4f, %.4f]\n", mean_f, ci_f[1], ci_f[2]))
+  cat(sprintf("alpha_b: mean = %.4f | 95%% CI = [%.4f, %.4f]\n", mean_b, ci_b[1], ci_b[2]))
+  cat(sprintf("Average time (s): %.2f | 95%% CI = [%.2f, %.2f]\n", mean_time, ci_time[1], ci_time[2]))
+  cat("\nEstimated precision matrix (Omega):\n")
+  print(G_final$Omega)
+  cat("=====================================================\n\n")
+
+  return(list(omega = G_final$Omega,
+              alpha_f_mean = mean_f,
+              alpha_b_mean = mean_b,
+              mean_time = mean_time,
+              alpha_f_CI = ci_f,
+              alpha_b_CI = ci_b,
+              time_CI = ci_time))
+}
+
+# File paths for each dataset
+datasets <- list(
+  ER_positive = "data/ER_positivo.csv",
+  ER_negative = "data/ER_negativo.csv",
+  PR_positive = "data/PR_positivo.csv",
+  PR_negative = "data/PR_negativo.csv"
+)
+
+# Main pipeline loop
+results <- list()
+for (name in names(datasets)) {
+  results[[name]] <- process_dataset(name, datasets[[name]])
+}
+
+```
