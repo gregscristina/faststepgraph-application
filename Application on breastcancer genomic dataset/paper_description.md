@@ -29,13 +29,12 @@ Then, we applied `FastStepGraph()` once using the averaged parameters to estimat
 ## Summary of Hyperparameter Results
 ![Screenshot 2025-05-25 at 20 39 16](https://github.com/user-attachments/assets/e2aec340-dedc-4ad6-9020-a1e240391cfe)
 
-
+## Graphs generated 
 ![Colorido2](https://github.com/user-attachments/assets/3cba525e-82f4-45e4-9c06-fd8038571836)
-- Four gene interaction graphs by strata  
+
 
 ## Biological Interpretation
 
-Several gene communities were consistently identified:
 ![Frame 10](https://github.com/user-attachments/assets/6b9857dd-250c-4ae9-ab46-bf0844041d00)
 
 - **MYBL2–UBE2C**: associated with cell replication and resistance to cisplatin
