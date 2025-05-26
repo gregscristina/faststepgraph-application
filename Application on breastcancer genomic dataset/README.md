@@ -4,11 +4,15 @@ This folder contains a complete pipeline to apply the **Fast Step Graph** algori
 
 It includes: 
 
-- A full pipeline for running FastStepGraph on breast cancer gene expression datasets
-- Four input datasets: ER+/ER− and PR+/PR−
+- Preprocessed gene expression datasets from CPTAC (PAM50 breast cancer dataset)
+- An automated pipeline for hyperparameter selection and sparse precision matrix estimation using Fast Step Graph
 - All data and scripts are under:  
   `Application on breastcancer genomic dataset/`
 ---
+
+## Reference
+This work was used in the article:  
+**"Discovery of Conditionally Independent Networks Among Gene Expressions in Breast Cancer Using Fast Step Graph"** 
 
 ## Authors
 
